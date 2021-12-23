@@ -11,7 +11,6 @@ from telethon.tl.types import MessageEntityUrl, MessageEntityTextUrl, User
 from telethon.errors.rpcerrorlist import UserNotParticipantError
 from telethon.tl.functions.channels import GetParticipantRequest
 from telegraph import Telegraph, exceptions, upload_file
-from unalix import clear_url
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s', level=logging.INFO)
 
@@ -72,7 +71,31 @@ async def _(event):
 async def export(event):
     if event.text.startswith("/") or (await check_user(event.sender_id)) is False:
         return
-    
+    url = None
+    if event.message.entities:
+        for entity in event.message.entities :
+			if isinstance(entity, MessageEntityTextUrl) :
+				input_url = entity.url
+			elif isinstance(entity, MessageEntityUrl) :
+				input_url = event.message.text[entity.offset :entity.offset + entity.length]
+			
+			if input_url is not None :
+				clean_url = clear_url(input_url)
+				if input_url != clean_url:
+					to_send.append(clean_url)
+					
+		if to_send :
+			to_send_txt = "\n\n".join(i for i in to_send)
+			await event.reply(f"\n{to_send_txt}", link_preview = False)
+		else:
+			chat = await event.get_chat()
+			if isinstance(chat, User) :  # don't disturb the group, only show at private chat
+				await event.reply("No unclean links found!")
+	else :
+		chat = await event.get_chat()
+		if isinstance(chat, User) :  # don't disturb the group, only throw error at private chat
+			await event.reply("The message did not contain any links for me to clean!")
+
 @BotzHub.on(events.NewMessage(incoming=True, func=lambda e: e.is_private and e.media))
 async def uploader(event):
     if (await check_user(event.sender_id)) is False:
