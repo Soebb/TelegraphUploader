@@ -68,6 +68,11 @@ async def _(event):
         return await event.edit(f"{ok.user.first_name}, please join my channel to use me!", buttons=[Button.url("Join Channel", url="https://t.me/BotzHub")])
     await event.edit(f"Send me a picture and I will upload it to Telegraph!\n\n~ @BotzHub")
 
+@BotzHub.on(events.NewMessage(incoming=True, func=lambda e: e.is_private and e.text))
+async def export(event):
+    if event.text.startswith("/") or (await check_user(event.sender_id)) is False:
+        return
+    
 @BotzHub.on(events.NewMessage(incoming=True, func=lambda e: e.is_private and e.media))
 async def uploader(event):
     if (await check_user(event.sender_id)) is False:
