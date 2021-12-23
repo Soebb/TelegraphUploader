@@ -7,13 +7,15 @@ from PIL import Image
 from telethon import TelegramClient, events, Button
 from telethon.tl.functions.users import GetFullUserRequest
 from decouple import config
+from telethon.tl.types import MessageEntityUrl, MessageEntityTextUrl, User
 from telethon.errors.rpcerrorlist import UserNotParticipantError
 from telethon.tl.functions.channels import GetParticipantRequest
 from telegraph import Telegraph, exceptions, upload_file
+from unalix import clear_url
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s', level=logging.INFO)
 
-# optional (need for enable the exporting webpages to Telegraph function)
+# optional (only for enable the exporting webpages to Telegraph function)
 telegraph_token = os.environ.get('TELEGRAPH_TOKEN')
 
 appid = apihash = bottoken = None
