@@ -13,6 +13,9 @@ from telegraph import Telegraph, exceptions, upload_file
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s', level=logging.INFO)
 
+# optional (need for enable the exporting webpages to Telegraph function)
+telegraph_token = os.environ.get('TELEGRAPH_TOKEN')
+
 appid = apihash = bottoken = None
 # start the bot
 print("Starting...")
